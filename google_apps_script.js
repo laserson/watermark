@@ -22,7 +22,9 @@ function doPost(e) {
   const dates = sheet.getRange("A:A").getValues();
   let rowIndex = -1;
   for (let i = 0; i < dates.length; i++) {
-    if (dates[i][0] === dateStr) {
+    const cell = dates[i][0];
+    const cellStr = cell instanceof Date ? Utilities.formatDate(cell, Session.getScriptTimeZone(), "yyyy-MM-dd") : String(cell);
+    if (cellStr === dateStr) {
       rowIndex = i + 1;
       break;
     }
@@ -70,8 +72,10 @@ function doGet(e) {
   const startRow = data.length > 0 && data[0][0] === "date" ? 1 : 0;
   for (let i = startRow; i < data.length; i++) {
     if (data[i][0]) {
+      const cell = data[i][0];
+      const dateStr = cell instanceof Date ? Utilities.formatDate(cell, Session.getScriptTimeZone(), "yyyy-MM-dd") : String(cell);
       rows.push({
-        date: data[i][0],
+        date: dateStr,
         score: data[i][1],
         notes: data[i][2],
       });
