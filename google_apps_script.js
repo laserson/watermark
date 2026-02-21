@@ -28,13 +28,18 @@ function doPost(e) {
     }
   }
 
-  if (rowIndex > 0) {
+  const isEmpty = score === "" && !notes;
+
+  if (rowIndex > 0 && isEmpty) {
+    // Delete row if both score and notes are empty
+    sheet.deleteRow(rowIndex);
+  } else if (rowIndex > 0) {
     // Update existing row
     sheet.getRange(rowIndex, 2).setValue(score);
     sheet.getRange(rowIndex, 3).setValue(notes);
     sheet.getRange(rowIndex, 4).setValue(new Date());
-  } else {
-    // Append new row
+  } else if (!isEmpty) {
+    // Append new row only if there's data
     sheet.appendRow([dateStr, score, notes, new Date()]);
   }
 
