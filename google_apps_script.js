@@ -19,12 +19,10 @@ function doPost(e) {
   const notes = data.notes || "";
 
   // Find existing row for this date
-  const dates = sheet.getRange("A:A").getValues();
+  const dates = sheet.getRange("A:A").getDisplayValues();
   let rowIndex = -1;
   for (let i = 0; i < dates.length; i++) {
-    const cell = dates[i][0];
-    const cellStr = cell instanceof Date ? Utilities.formatDate(cell, Session.getScriptTimeZone(), "yyyy-MM-dd") : String(cell);
-    if (cellStr === dateStr) {
+    if (dates[i][0] === dateStr) {
       rowIndex = i + 1;
       break;
     }
@@ -65,19 +63,19 @@ function doGet(e) {
   }
 
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const data = sheet.getDataRange().getValues();
+  const range = sheet.getDataRange();
+  const display = range.getDisplayValues();
+  const values = range.getValues();
   const rows = [];
 
   // Skip header row if present
-  const startRow = data.length > 0 && data[0][0] === "date" ? 1 : 0;
-  for (let i = startRow; i < data.length; i++) {
-    if (data[i][0]) {
-      const cell = data[i][0];
-      const dateStr = cell instanceof Date ? Utilities.formatDate(cell, Session.getScriptTimeZone(), "yyyy-MM-dd") : String(cell);
+  const startRow = display.length > 0 && display[0][0] === "date" ? 1 : 0;
+  for (let i = startRow; i < display.length; i++) {
+    if (display[i][0]) {
       rows.push({
-        date: dateStr,
-        score: data[i][1],
-        notes: data[i][2],
+        date: display[i][0],
+        score: values[i][1],
+        notes: values[i][2],
       });
     }
   }
