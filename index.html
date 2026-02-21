@@ -204,10 +204,8 @@ textarea {
 
   logoutBtn.addEventListener("click", () => {
     clearPin();
-    app.style.display = "none";
-    pinScreen.style.display = "flex";
-    pinInput.value = "";
-    pinError.style.display = "none";
+    localStorage.removeItem("wm_api_url");
+    location.reload();
   });
 
   // --- Navigation ---
