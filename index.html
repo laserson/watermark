@@ -302,12 +302,11 @@ textarea {
     };
     fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      redirect: "follow",
+      mode: "no-cors",
     })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
+      .then(() => {
         statusEl.textContent = "Saved";
         setTimeout(() => { if (statusEl.textContent === "Saved") statusEl.textContent = ""; }, 1500);
       })
