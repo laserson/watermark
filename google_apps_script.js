@@ -66,6 +66,7 @@ function doGet(e) {
   const range = sheet.getDataRange();
   const display = range.getDisplayValues();
   const values = range.getValues();
+
   const rows = [];
 
   // Skip header row if present
