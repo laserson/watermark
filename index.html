@@ -53,7 +53,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 
 /* Top bar */
-.top-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.last-entry { font-size: 13px; color: #8e8e93; }
 .logout-btn { font-size: 13px; color: #007aff; }
 
 /* Calendar */
@@ -103,6 +104,7 @@ textarea {
 <!-- Main App -->
 <div id="app">
   <div class="top-bar">
+    <span class="last-entry" id="last-entry"></span>
     <button class="logout-btn" id="logout-btn">Logout</button>
   </div>
 
@@ -145,6 +147,7 @@ textarea {
   const scoresEl   = document.getElementById("scores");
   const statusEl   = document.getElementById("status");
   const logoutBtn  = document.getElementById("logout-btn");
+  const lastEntryEl = document.getElementById("last-entry");
 
   let selectedDate = today();
   let currentScore = null;
@@ -175,6 +178,10 @@ textarea {
     return d.toLocaleDateString(undefined, {
       weekday: "long", month: "long", day: "numeric"
     });
+  }
+  function daysAgo(dateStr) {
+    const diff = parseLocal(today()) - parseLocal(dateStr);
+    return Math.round(diff / 86400000);
   }
 
   // --- PIN ---
@@ -270,10 +277,26 @@ textarea {
       });
   }
 
+  function updateSummary(rows) {
+    // Rows are sorted newest-first by the Apps Script; find the latest dated entry.
+    const dates = rows.map((r) => r.date).filter(Boolean).sort();
+    const last = dates[dates.length - 1];
+    if (!last) {
+      lastEntryEl.textContent = "No entries yet";
+      return;
+    }
+    const n = daysAgo(last);
+    lastEntryEl.textContent =
+      n <= 0 ? "Last entry today" :
+      n === 1 ? "Last entry yesterday" :
+      `Last entry ${n} days ago`;
+  }
+
   function loadEntry() {
     statusEl.textContent = "Loading...";
     fetchEntries()
       .then((rows) => {
+        updateSummary(rows);
         const entry = rows.find((r) => r.date === selectedDate);
         if (entry) {
           currentScore = entry.score === "" || entry.score == null ? null : Number(entry.score);

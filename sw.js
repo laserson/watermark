@@ -1,4 +1,4 @@
-const CACHE_NAME = "watermark-v1";
+const CACHE_NAME = "watermark-v2";
 const APP_SHELL = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", (e) => {
